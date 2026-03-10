@@ -1,11 +1,24 @@
 const express = require('express');
+const cors = require('cors');
+const { PORT } = require('./config/env');
+const routes = require('./routes');
+const notFound = require('./middleware/notFound');
+const errorHandler = require('./middleware/errorHandler');
+
 const app = express();
-const port = 3000;
 
-app.get('/', (req, res) => {
-  res.send('Backend funcionando');
-});
+// Middlewares globales
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.listen(port, () => {
-  console.log(`Servidor backend en http://localhost:${port}`);
+// Rutas
+app.use('/api', routes);
+
+// Manejo de rutas no encontradas y errores
+app.use(notFound);
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+  console.log(`Servidor backend en http://localhost:${PORT}`);
 });
